@@ -10,11 +10,10 @@ class KNN:
     """
     Clase que implementa el algoritmo KNN.
     """
-    def __init__(self, data, entrenamiento, prueba, k):
+    def __init__(self, entrenamiento, prueba, k):
         """
         Constructor de la clase KNN.
         """
-        self.data = data
         self.entrenamiento = entrenamiento
         self.prueba = prueba
         self.k = k
@@ -26,13 +25,6 @@ class KNN:
             distancia += (abs(x - y)) ** 2
         return sqrt(distancia)
 
-    def distancia_manhattan(self, X, Y):
-        distancia = 0
-        # ||X - Y||_1 = Sumatoria(|xi - yi|)
-        for x, y in zip(X, Y):
-            distancia += abs(x - y)
-        return distancia
-
     def prediccion_clase(self, obs_prueba):
         """
         Método que predice una observación de una clase.
@@ -43,11 +35,11 @@ class KNN:
             distancias.append([index, self.distancia_euclidea(obs_prueba, obs)])
         distancias = sorted(distancias, key=itemgetter(1))
         # obteniendo la predicción.
+        nn_clases = []
         for nn in range(self.k):
-            nn_clases = []
             index_clase = distancias[nn][0]
-            clase = self.data.iloc[index_clase, self.entrenamiento.columns == "Education"]
-            nn_clases.append(clase)
+            clase = self.entrenamiento.iloc[index_clase, self.entrenamiento.columns == "Education"][0]
+            nn_clases.append(int(clase))
         return mode(nn_clases)
 
     def predicciones(self):
@@ -56,7 +48,8 @@ class KNN:
         """
         predicciones = []
         for index, obs in self.prueba.iloc[:, self.prueba.columns != "Education"].iterrows():
-            predicciones.append([self.data.iloc[index, self.data.columns == "Education"], self.prediccion_clase(obs)])
+            clase_real = self.prueba.iloc[index, self.prueba.columns == "Education"][0]
+            predicciones.append([int(clase_real), self.prediccion_clase(obs)])
         return predicciones
 
     def __str__(self):
