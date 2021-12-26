@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Autor: Juan Pablo Nahuelpán
-
 from knn import KNN
 import pandas as pd
 
